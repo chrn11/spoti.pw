@@ -88,6 +88,12 @@ static SGRArtworkField *fieldIn(UIView *page) {
     %orig;
     UIScrollView *list = (UIScrollView *)self;
     if (list.backgroundColor && SGIsBaseSurface(list.backgroundColor.CGColor)) list.backgroundColor = UIColor.clearColor;
+    // The extender heading is a reusable view in some Spotify builds rather than the playlist-specific
+    // track cell. Sweep the list's direct reusable children after UICollectionView has laid them out so
+    // both cell variants lose their page-wide base surface; nested recommendation cards are not touched.
+    for (UIView *sub in list.subviews) {
+        if ([sub isKindOfClass:UICollectionReusableView.class]) SGRClearCellPaint(sub);
+    }
 }
 %end
 

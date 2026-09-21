@@ -67,7 +67,6 @@ static void clearExtenderSurfaces(UIView *cell) {
         if (![identifier hasPrefix:@"PlaylistExtender."] && ![className containsString:@"PlaylistExtender"]) return;
         // The extender heading/row can paint its black surface directly on either the view or its layer,
         // bypassing the generic repaint observer. These are page-owned surfaces, not card artwork.
-        view.backgroundColor = UIColor.clearColor;
         view.layer.backgroundColor = NULL;
         for (CALayer *layer in view.layer.sublayers) {
             if (layer.backgroundColor && SGIsBaseSurface(layer.backgroundColor)) layer.backgroundColor = NULL;
@@ -107,7 +106,9 @@ static void applyRow(UIView *cell) {
 - (void)layoutSubviews {
     %orig;
     UIView *cell = (UIView *)self;
-    if (!SGRPlaylistHeaderOf(cell)) return;
+    // Playlist rows live under FTPViewController; the header controller is a sibling in some low-iOS
+    // hierarchies, so checking SGRPlaylistHeaderOf(cell) misses the very cells that paint the extender.
+    if (!SGRPlaylistPageOf(cell)) return;
     SGRClearCellPaint(cell);
     clearExtenderSurfaces(cell);
     if (SGRedesignUsesSafeLegacyLayout()) return;
@@ -131,7 +132,7 @@ static void applyRow(UIView *cell) {
 - (void)layoutSubviews {
     %orig;
     UIView *cell = (UIView *)self;
-    if (!SGRPlaylistHeaderOf(cell)) return;
+    if (!SGRPlaylistPageOf(cell)) return;
     // Spotify uses the generic Element_List cell for some extender builds, while track rows use the
     // playlist-specific cell class below. Clear page-owned extender paint in both cases.
     SGRClearCellPaint(cell);

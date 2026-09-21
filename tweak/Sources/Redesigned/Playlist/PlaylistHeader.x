@@ -66,7 +66,7 @@ UIView *SGRPlaylistPageOf(UIView *view) {
 UIViewController *SGRPlaylistHeaderOf(UIView *view) {
     for (UIResponder *r = view; r; r = r.nextResponder) {
         if (![r isKindOfClass:UIViewController.class]) continue;
-        return [NSStringFromClass(r.class) containsString:@"FreeTierPlaylist"] ? (UIViewController *)r : nil;
+        if ([NSStringFromClass(r.class) containsString:@"FreeTierPlaylist"]) return (UIViewController *)r;
     }
     return nil;
 }

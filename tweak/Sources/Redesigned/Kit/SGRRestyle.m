@@ -391,6 +391,9 @@ static void clearPaint(UIView *view, UIView *cell, CGFloat wide) {
         if (color && SGIsBaseSurface(color.CGColor)) view.backgroundColor = UIColor.clearColor;
         CGColorRef layerColor = view.layer.backgroundColor;
         if (layerColor && SGIsBaseSurface(layerColor)) view.layer.backgroundColor = NULL;
+        for (CALayer *layer in view.layer.sublayers) {
+            if (layer.backgroundColor && SGIsBaseSurface(layer.backgroundColor)) layer.backgroundColor = NULL;
+        }
         if (!view.layer.mask && [NSStringFromClass(view.class) containsString:@"GradientView"]) view.layer.mask = [CALayer layer];
     }
     for (UIView *sub in view.subviews) clearPaint(sub, cell, wide);
