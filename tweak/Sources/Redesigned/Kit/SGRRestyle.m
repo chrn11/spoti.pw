@@ -385,10 +385,12 @@ static void clearPaint(UIView *view, UIView *cell, CGFloat wide) {
     BOOL full = view.bounds.size.width >= wide;
     if (view != cell && !full && [view isKindOfClass:UICollectionViewCell.class]) return;
     if (full) {
-        // Read off the layer, written through the view, so the two are left saying the same thing: the
-        // clear colour lands on both, and reads back with an alpha the next pass does not take for paint.
-        CGColorRef color = view.layer.backgroundColor;
-        if (color && SGIsBaseSurface(color)) view.backgroundColor = UIColor.clearColor;
+        // Spotify sometimes paints extender/recommendation surfaces directly on CALayer rather than
+        // through UIView.backgroundColor. Clear both channels so the field cannot show a rectangular black band.
+        UIColor *color = view.backgroundColor;
+        if (color && SGIsBaseSurface(color.CGColor)) view.backgroundColor = UIColor.clearColor;
+        CGColorRef layerColor = view.layer.backgroundColor;
+        if (layerColor && SGIsBaseSurface(layerColor)) view.layer.backgroundColor = NULL;
         if (!view.layer.mask && [NSStringFromClass(view.class) containsString:@"GradientView"]) view.layer.mask = [CALayer layer];
     }
     for (UIView *sub in view.subviews) clearPaint(sub, cell, wide);

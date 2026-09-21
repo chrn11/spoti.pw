@@ -35,6 +35,8 @@ static SGRArtworkField *fieldOn(UIView *view) {
     return nil;
 }
 
+static SGRArtworkField *fieldIn(UIView *page);
+
 UIColor *SGRPlaylistFieldColor(UIView *view) {
     SGRArtworkField *field = fieldOn(view);
     return field.fieldColor ?: SGRNeutralField();
@@ -42,6 +44,10 @@ UIColor *SGRPlaylistFieldColor(UIView *view) {
 
 void SGRPlaylistSetArtwork(UIView *view, UIImage *image) {
     if (image) [fieldOn(view) setArtwork:image identity:nil animated:YES];
+}
+
+void SGRPlaylistSetPreferredColor(UIView *view, UIColor *color) {
+    if (color) [fieldOn(view) setPreferredColor:color];
 }
 
 static SGRArtworkField *fieldIn(UIView *page) {

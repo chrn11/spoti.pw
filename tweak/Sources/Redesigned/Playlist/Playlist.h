@@ -43,4 +43,6 @@ UIView *SGRPlaylistPageOf(UIView *view);
 // cover has to dissolve into for there to be no seam.
 UIColor *SGRPlaylistFieldColor(UIView *view);
 // The cover of the page `view` is on, for its field to take its colour from. The same image again is a no-op.
-void SGRPlaylistSetArtwork(UIView *view, UIImage *image);
+// The field color the page is showing. A no-artwork page may supply a Spotify fallback color so its
+// surface does not fall back to AMOLED black.
+void SGRPlaylistSetPreferredColor(UIView *view, UIColor *color);

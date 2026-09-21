@@ -19,9 +19,10 @@ BOOL SGRedesignAvailable(void);
 // native Liquid Glass surfaces; older supported systems use the Kit's blur/solid compatibility renderer.
 BOOL SGSystemGlassAvailable(void);
 
-// The redesigned screens are still available on Spotify 9.1.78's iOS floor, but the section-filtering
-// hooks mutate self-sizing UICollectionView cells. iOS 16/17 need the conservative path until those
-// mutations are made transactional; visual restyling and the rest of the redesign remain enabled.
+// iOS 17's self-sizing implementation is the path known to re-enter while the redesign mutates a cell
+// (issue #37). Spotify 9.1.78's iOS 16 floor does not need that conservative escape hatch, so keep the
+// original section filtering there; iOS 17–25 retain Spotify's list geometry until a transactional filter
+// is available. iOS 26 uses the original path with the system's tested UIKit.
 BOOL SGRedesignUsesSafeLegacyLayout(void);
 
 BOOL SGRedesignedUI(void);

@@ -37,6 +37,8 @@ static UIView *identified(UIView *root, NSString *identifier, const void *cacheK
 static void clearSurface(UIView *view) {
     UIColor *color = view.backgroundColor;
     if (color && SGIsBaseSurface(color.CGColor)) view.backgroundColor = UIColor.clearColor;
+    CGColorRef layerColor = view.layer.backgroundColor;
+    if (layerColor && SGIsBaseSurface(layerColor)) view.layer.backgroundColor = NULL;
 }
 
 static void applyHairline(UIView *row, CGFloat leading) {

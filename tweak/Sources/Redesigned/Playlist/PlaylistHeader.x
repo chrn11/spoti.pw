@@ -366,7 +366,7 @@ static void showPlaylist(SGRHeaderInfo *info, UIView *block, UIView *root, id mo
     [info showTitle:title creator:creatorIn(block) length:lengthIn(block)
               about:plainText(modelString(model, @"playlistDescription"))];
 
-    BOOL liked = [modelString(model, @"formatListType") isEqualToString:@"liked-songs"];
+    BOOL liked = [modelString(model, @"formatListType") ?: @"" isEqualToString:@"liked-songs"];
     BOOL own = modelFlag(model, @"isOwnedBySelf", YES) || liked;
     UIView *shuffle = SGRFindByIdentifier(block, @"Components.UI.ShuffleButton", &kShuffleKey);
     UIView *play = SGRFindByIdentifier(root, @"header-play-button", &kPlayKey);
@@ -545,12 +545,20 @@ static void applyHeader(UIView *layout) {
     UIView *headerRoot = headerVC.viewIfLoaded;
     if (!headerRoot) return;
 
-    // A playlist's artwork square, or a mix's full bleed picture where there is no square. Either way it is
-    // the view the picture is read from and the view that is concealed once the hero is drawing it.
+    // A playlist's artwork square, or a mix's full bleed image where there is no square. Liked Songs has
+    // neither, but its Spotify layout contains a dedicated gradient container that must remain the field
+    // source instead of being left at neutral black.
     UIView *fullbleed = fullbleedIn(layout);
     UIView *cover = SGRFindByIdentifier(layout, @"Components.Header.UI.ArtworkImage", &kCoverKey) ?: fullbleed;
     UIView *block = blockIn(layout, cover, fullbleed);
     if (!block) return;
+
+    id model = viewModelOf(headerVC);
+    BOOL liked = [[modelString(model, @"formatListType") lowercaseString] isEqualToString:@"liked-songs"];
+    if (!cover && liked) {
+        SGRPlaylistSetPreferredColor(layout, [UIColor colorWithRed:0.12 green:0.28 blue:0.42 alpha:1]);
+    }
+
 
     UIView *plane = applyBackground(layout);
     applyToolbar(headerRoot);
