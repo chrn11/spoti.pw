@@ -57,6 +57,19 @@ static const CFTimeInterval kStillFor = 0.1;
 + (instancetype)filterWithType:(NSString *)type;
 @end
 
+@interface SGRSiblingState : NSObject
+@property (nonatomic, weak) UIView *view;
+@property (nonatomic) CGFloat alpha;
+@property (nonatomic) BOOL hidden;
+@property (nonatomic) BOOL interaction;
+@end
+
+@implementation SGRSiblingState
+@end
+
+static char kSiblingStatesKey;
+
+
 // Whether a line is written right to left, told by its first letter the way the Unicode bidi algorithm
 // tells a paragraph's direction. Each line is asked on its own, since a song can mix scripts, and the
 // phone's language has no say in it.
@@ -1424,8 +1437,29 @@ typedef struct {
 }
 
 - (void)syncSiblings {
+    if (!self.superview) return;
+    NSMutableArray<SGRSiblingState *> *states = objc_getAssociatedObject(self, &kSiblingStatesKey);
+    if (!states) {
+        states = [NSMutableArray array];
+        objc_setAssociatedObject(self, &kSiblingStatesKey, states, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
     for (UIView *sibling in self.superview.subviews) {
-        if (sibling != self && _showing) sibling.alpha = 0;
+        if (sibling == self) continue;
+        SGRSiblingState *state = nil;
+        for (SGRSiblingState *candidate in states) if (candidate.view == sibling) { state = candidate; break; }
+        if (!state) {
+            state = [SGRSiblingState new];
+            state.view = sibling;
+            state.alpha = sibling.alpha;
+            state.hidden = sibling.hidden;
+            state.interaction = sibling.userInteractionEnabled;
+            [states addObject:state];
+        }
+        if (_showing) {
+            sibling.alpha = 0;
+            sibling.userInteractionEnabled = NO;
+            sibling.accessibilityElementsHidden = YES;
+        }
     }
 }
 
@@ -1434,8 +1468,20 @@ typedef struct {
     _showing = showing;
     self.hidden = !showing;
     _credit.hidden = !showing || !_credit.text.length;
-    for (UIView *sibling in self.superview.subviews) {
-        if (sibling != self) sibling.alpha = showing ? 0 : 1;
+    NSArray<SGRSiblingState *> *states = objc_getAssociatedObject(self, &kSiblingStatesKey);
+    for (SGRSiblingState *state in states) {
+        UIView *sibling = state.view;
+        if (!sibling) continue;
+        if (showing) {
+            sibling.alpha = 0;
+            sibling.userInteractionEnabled = NO;
+            sibling.accessibilityElementsHidden = YES;
+        } else {
+            sibling.alpha = state.alpha;
+            sibling.hidden = state.hidden;
+            sibling.userInteractionEnabled = state.interaction;
+            sibling.accessibilityElementsHidden = NO;
+        }
     }
 }
 

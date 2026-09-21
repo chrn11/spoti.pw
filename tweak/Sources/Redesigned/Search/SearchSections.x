@@ -83,6 +83,10 @@ static void shift(UICollectionViewCell *cell) {
     if (!CGAffineTransformEqualToTransform(cell.transform, moved)) cell.transform = moved;
 }
 
+static void resetCellTransform(UICollectionViewCell *cell) {
+    if (!CGAffineTransformIsIdentity(cell.transform)) cell.transform = CGAffineTransformIdentity;
+}
+
 static void collapse(UICollectionViewCell *cell, CGFloat natural) {
     UIView *content = cell.contentView;
     objc_setAssociatedObject(cell, &kCollapsedKey, @(natural), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -127,17 +131,15 @@ static CGFloat measure(UICollectionView *list) {
 
 void SGRSearchCloseGap(UICollectionView *list) {
     if (!list) return;
-    static CGSize lastSize;
-    static NSUInteger lastChanges = NSUIntegerMax;
-    static __weak UICollectionView *lastList;
+    BOOL listChanged = list != lastList;
     CGSize size = list.contentSize;
-    if (list == lastList && sg_changes == lastChanges && CGSizeEqualToSize(size, lastSize)) return;
+    if (!listChanged && list == lastList && sg_changes == lastChanges && CGSizeEqualToSize(size, lastSize)) return;
     sg_list = lastList = list;
     lastChanges = sg_changes;
     lastSize = size;
 
     CGFloat gap = measure(list);
-    if (gap == sg_gap) return;
+    if (!listChanged && gap == sg_gap) return;
     sg_gap = gap;
     SGLog(@"redesign search: cards moved up %.0fpt, the spacing the collapsed sections above them leave", gap);
     for (UIView *sub in list.subviews) {
@@ -198,10 +200,12 @@ static void measureSoon(void) {
     NSNumber *natural = objc_getAssociatedObject(cell, &kCollapsedKey);
     if (natural) collapse(cell, natural.doubleValue);
     if (sg_gap > 0 && isBrowseCell(cell.contentView)) shift(cell);
+    else if (isBrowseCell(cell.contentView)) resetCellTransform(cell);
 }
 
 - (void)prepareForReuse {
     %orig;
+    resetCellTransform((UICollectionViewCell *)self);
     if (objc_getAssociatedObject(self, &kCollapsedKey)) expand((UICollectionViewCell *)self);
 }
 %end

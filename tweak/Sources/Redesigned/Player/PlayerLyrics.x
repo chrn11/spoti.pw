@@ -447,16 +447,19 @@ static void replace(void) {
 
 @implementation SGRPlayerLyricsWatcher {
     NSString *_track;
+    NSUInteger _generation;
 }
 
 - (void)playerStateDidChange:(SPTPlayerState *)state {
     NSString *track = SGURIString(state.track.URI);
     if (!track || [track isEqualToString:_track]) return;
-    _track = track;
+    _track = [track copy];
+    NSUInteger generation = ++_generation;
     // Lyrics arrive a moment after the track does, and nothing announces them: the glyph is asked again
     // while they would be coming, and the lines already up wait out the same grace before they go.
     for (NSNumber *delay in @[@1, @(kLyricsGrace)]) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay.doubleValue * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (generation != self->_generation || ![self->_track isEqualToString:track]) return;
             SGRPlayerLyricsChanged();
             if (sg_open && delay.doubleValue >= kLyricsGrace && !SGRPlayerLyricsAvailable()) {
                 SGLog(@"redesign player: no lyrics for the track that came on, the cover is back");

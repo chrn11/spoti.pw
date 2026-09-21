@@ -44,8 +44,20 @@ static NSArray<UIView *> *tabItems(UIView *tabBar) {
 }
 
 // Navbar.x never reorders Spotify's row and appends the mod's own tabs after it, so Home stays first.
+static BOOL isHomeItem(UIView *item) {
+    if (!item) return NO;
+    __block BOOL home = NO;
+    SGForEachView(item, ^(UIView *view) {
+        if (home) return;
+        NSString *identifier = view.accessibilityIdentifier.lowercaseString;
+        NSString *label = [view isKindOfClass:UILabel.class] ? ((UILabel *)view).text.lowercaseString : nil;
+        home = [identifier containsString:@"home"] || [label isEqualToString:@"home"] || [label isEqualToString:@"主页"];
+    });
+    return home;
+}
+
 static BOOL isHome(UIView *item, UIView *tabBar) {
-    return item && item == SGRowIn(tabBar).arrangedSubviews.firstObject;
+    return isHomeItem(item);
 }
 
 static UILabel *labelIn(UIView *item) {

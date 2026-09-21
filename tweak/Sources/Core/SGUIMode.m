@@ -15,12 +15,14 @@ BOOL SGSystemGlassAvailable(void) {
     return NO;
 }
 
-// The section-filtering hooks mutate self-sizing UICollectionView cells. They are reliable on the
-// iOS 26 path, but iOS 16/17 can re-enter preferredLayoutAttributesFittingAttributes: while those
-// mutations are settling and eventually trip the scene-update watchdog. Older systems keep the
-// Redesigned styling and use Spotify's own list sizing until that path is made fully transactional.
+// iOS 17's self-sizing implementation is the path known to re-enter while the redesign mutates a cell
+// (issue #37). Spotify 9.1.78's iOS 16 floor does not need that conservative escape hatch, so keep the
+// original section filtering there; iOS 17–25 retain Spotify's list geometry until a transactional filter
+// is available. iOS 26 uses the original path with the system's tested UIKit.
 BOOL SGRedesignUsesSafeLegacyLayout(void) {
-    return !SGSystemGlassAvailable();
+    if (@available(iOS 26.0, *)) return NO;
+    if (@available(iOS 17.0, *)) return YES;
+    return NO;
 }
 
 BOOL SGRedesignedUI(void) {

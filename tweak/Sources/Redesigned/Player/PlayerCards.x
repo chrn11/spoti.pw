@@ -32,12 +32,47 @@ static BOOL isPlayerCard(UIView *content) {
     return player;
 }
 
+static BOOL isLyricsCard(UIView *content) {
+    return content && (SGHasClass(content, @"Lyrics_CardElementImpl")
+                       || SGRFindByIdentifier(content, @"lyrics-card-view", NULL) != nil);
+}
+
+static char kLyricsHiddenKey;
+
+static void setLyricsCardSuppressed(UICollectionViewCell *cell, BOOL suppressed) {
+    UIView *content = cell.contentView.subviews.firstObject;
+    if (!content) return;
+    if (suppressed) {
+        objc_setAssociatedObject(cell, &kLyricsHiddenKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        content.alpha = 0;
+        content.userInteractionEnabled = NO;
+        content.accessibilityElementsHidden = YES;
+    } else if (objc_getAssociatedObject(cell, &kLyricsHiddenKey)) {
+        objc_setAssociatedObject(cell, &kLyricsHiddenKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        content.alpha = 1;
+        content.userInteractionEnabled = YES;
+        content.accessibilityElementsHidden = NO;
+    }
+}
+
 %hook _TtC12Element_List18CollectionViewCell
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)attributes {
-    if (SGRedesignUsesSafeLegacyLayout()) return %orig;
     UICollectionViewLayoutAttributes *result = %orig;
     UIView *cell = (UIView *)self;
     UIView *content = cell.subviews.firstObject;
+    // The compatibility path deliberately avoids collapsing every self-sizing card on iOS 16/17,
+    // but the native lyrics card must not coexist with PlayerLyrics.x's own overlay. This one card is
+    // identified before changing its height and does not mutate its contentView constraints.
+    if (SGRedesignUsesSafeLegacyLayout()) {
+        if (content && isLyricsCard(content)) {
+            setLyricsCardSuppressed((UICollectionViewCell *)self, YES);
+            result.size = CGSizeMake(result.size.width, 0);
+            cell.clipsToBounds = YES;
+        } else {
+            setLyricsCardSuppressed((UICollectionViewCell *)self, NO);
+        }
+        return result;
+    }
     if (!content || !isPlayerCard(content)) return result;
     result.size = CGSizeMake(result.size.width, 0);
     cell.clipsToBounds = YES;
@@ -51,6 +86,18 @@ static BOOL isPlayerCard(UIView *content) {
         SGLog(@"redesign player: collapsed card root %@ (%lu kinds so far)", name, (unsigned long)logged.count);
     }
     return result;
+}
+- (void)layoutSubviews {
+    %orig;
+    if (SGRedesignUsesSafeLegacyLayout()) {
+        UIView *content = ((UICollectionViewCell *)self).contentView.subviews.firstObject;
+        if (content && isLyricsCard(content)) setLyricsCardSuppressed((UICollectionViewCell *)self, YES);
+    }
+}
+
+- (void)prepareForReuse {
+    %orig;
+    setLyricsCardSuppressed((UICollectionViewCell *)self, NO);
 }
 %end
 
