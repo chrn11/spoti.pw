@@ -241,6 +241,13 @@ static void complete(id<NSURLSessionDataDelegate> delegate, NSURLSession *sessio
 %ctor {
     ads = SGHidden(SGKeyHideAds);
     premium = SGHidden(SGKeyFakePremium);
+    // Spotify 9.1.84 removed the legacy SPTDataLoaderService entry point used by this
+    // 9.1.78-era product-state rewriter. Do not leave the old premium interceptor active
+    // against an unknown transport: pass the real account/subscription flow through instead.
+    if (premium && !NSClassFromString(@"SPTDataLoaderService")) {
+        premium = NO;
+        SGLog(@"adblock: disabled legacy premium network rewrite; Spotify transport is unsupported");
+    }
     if (!ads && !premium) return;
     started = NSDate.date;
     cacheLock = [NSObject new];

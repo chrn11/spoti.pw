@@ -89,8 +89,13 @@ static void logOnce(NSString *what) {
 }
 
 %hook _TtC12Element_List18CollectionViewCell
+// iOS 16/17 re-enters self-sizing while the redesign changes content frames. The crash log on Spotify
+// 9.1.84 shows this exact Album cell path reaching UIKit's systemLayoutSizeFittingSize and then spending
+// the whole scene update in preferredLayoutAttributesFittingAttributes:. Do not mutate Album section
+// geometry on the compatibility renderer; keep Spotify's native sizing and only retain field/background
+// styling from AlbumField.x.
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)attributes {
-    if (SGRedesignUsesSafeLegacyLayout()) return %orig;
+    if (!SGSystemGlassAvailable() || SGRedesignUsesSafeLegacyLayout()) return %orig;
     UICollectionViewCell *cell = (UICollectionViewCell *)self;
     UIView *content = cell.contentView.subviews.firstObject;
     // Cells are reused across kinds, and one settled before can hold a track row now.
