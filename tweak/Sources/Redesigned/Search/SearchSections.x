@@ -42,6 +42,9 @@ static CGFloat sg_gap;
 static NSUInteger sg_changes;
 static __weak UICollectionView *sg_list;
 static BOOL sg_measureQueued;
+static CGSize lastSize;
+static NSUInteger lastChanges = NSUIntegerMax;
+static __weak UICollectionView *lastList;
 
 static void logOnce(NSString *what) {
     static NSMutableSet<NSString *> *logged;
