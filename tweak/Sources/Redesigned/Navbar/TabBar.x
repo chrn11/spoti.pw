@@ -299,11 +299,10 @@ static void logBarOnce(UITabBar *bar) {
 // itself, and moves them all with the message bar.
 static const CGFloat kStockRow = 49;
 
-// UIKit asks for 62 + max(21, inset) on a phone with a home button, max(83, 49 + inset) on a Face ID
-// phone, by the safe area of the view the bar stands in. SGRTabBarHost keeps the room out of that; if
-// it ever reached the bar again, the bar would ask for more room every pass, so what it asks for with
-// no room made is what is kept.
+// The iOS 26 system bar asks for a taller Liquid Glass surface. On older systems the custom
+// UITabBar must stay at Spotify's stock row height: there is no native glass platter to make room for.
 static CGFloat glassHeight(UITabBar *bar, UIView *stockBar) {
+    if (!SGSystemGlassAvailable()) return kStockRow;
     if (sg_room < 0.5 || sg_glassHeight <= 0) sg_glassHeight = [bar sizeThatFits:CGSizeMake(stockBar.bounds.size.width, kStockRow)].height;
     return sg_glassHeight;
 }
@@ -325,7 +324,7 @@ static void makeRoom(UIViewController *container) {
     CGFloat height = glassHeight(bar, stockBar);
     // Spotify's regular width bar is a fixed 76 pt that ignores the inset.
     BOOL compact = container.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
-    CGFloat room = compact ? MAX(0, ceil(height - kStockRow - inset)) : 0;
+    CGFloat room = (SGSystemGlassAvailable() && compact) ? MAX(0, ceil(height - kStockRow - inset)) : 0;
     if (fabs(extra.bottom - room) < 0.5) return;
     sg_room = extra.bottom = room;
     container.additionalSafeAreaInsets = extra;
