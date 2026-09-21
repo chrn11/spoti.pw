@@ -130,6 +130,7 @@ static void logOnce(NSString *what) {
 
 %hook _TtC12Element_List18CollectionViewCell
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)attributes {
+    if (SGRedesignUsesSafeLegacyLayout()) return %orig;
     UICollectionViewCell *cell = (UICollectionViewCell *)self;
     UICollectionView *list = listOf(cell);
     // Only the page's own list: a card inside a carousel is a cell of the same class, and its row decides.

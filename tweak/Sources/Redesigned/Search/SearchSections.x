@@ -159,6 +159,7 @@ static void measureSoon(void) {
 
 %hook _TtC12Element_List18CollectionViewCell
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)attributes {
+    if (SGRedesignUsesSafeLegacyLayout()) return %orig;
     UICollectionViewCell *cell = (UICollectionViewCell *)self;
     UIView *content = cell.contentView;
     if (!isBrowseCell(content)) return %orig;

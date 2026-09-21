@@ -42,15 +42,11 @@ screens works under both. So the sources are four layers, each a directory of fe
 
     Shared/       works the same with either look
     Native/       Spotify's own screens tweaked; every %ctor starts with `if (!SGNativeUI()) return;`
-    Redesigned/   the redesign; every %ctor starts with `if (!SGRedesignedUI()) return;`
+    Redesigned/   the redesign; every %ctor starts with `if (!SGRedesignedUI()) return;`. On iOS 26 it uses
+                  native Liquid Glass; on older supported systems its existing blur/solid compatibility path runs.
     App/          Mod Settings' root and the pages that combine the layers, the Mod page, the tour
 
-`SGRedesignAvailable()` (Core/SGUIMode.h) holds the redesign to iOS 26 and up: it is Liquid Glass, and
-`UIGlassEffect` is the system's, so on an older OS the glass calls fall back to a blur and the redesign
-runs untested against an older UIKit (issue #37, an iOS 17 scene-update watchdog). Below 26 both
-`SGRedesignedUI()` and `SGRedesignedUIStored()` answer NO whatever is stored, so no Redesigned/ %ctor
-runs, App/Pages.m draws the switch as a "Needs iOS 26" row and the tour greys its card out. The stored
-key is left alone, so a phone that updates gets its redesign back.
+The redesign is available on Spotify 9.1.78's iOS floor. iOS 26 supplies Apple's native Liquid Glass; older supported systems use the existing blur/solid compatibility renderer. The legacy look remains available as before. Both live in Settings → Mod Settings.
 
 The two looks never run together, so each hooks the same Spotify class in its own way, and a part of
 the look is edited on its own side without touching the other: where both need the same thing, each

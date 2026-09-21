@@ -145,7 +145,7 @@ static void layoutHeader(UIStackView *row) {
     UIView *view = ((UIViewController *)self).viewIfLoaded;
     if (!view || !findParts(view)) return;
     layoutHeader(sg_row);
-    SGRSearchCloseGap(sg_list);
+    if (!SGRedesignUsesSafeLegacyLayout()) SGRSearchCloseGap(sg_list);
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previous {

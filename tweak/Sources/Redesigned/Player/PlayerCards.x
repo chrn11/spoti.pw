@@ -34,6 +34,7 @@ static BOOL isPlayerCard(UIView *content) {
 
 %hook _TtC12Element_List18CollectionViewCell
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)attributes {
+    if (SGRedesignUsesSafeLegacyLayout()) return %orig;
     UICollectionViewLayoutAttributes *result = %orig;
     UIView *cell = (UIView *)self;
     UIView *content = cell.subviews.firstObject;

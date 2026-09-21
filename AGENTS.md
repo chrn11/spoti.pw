@@ -20,11 +20,7 @@ sources, gestures, blocked artists, flags, Vibrations, Speed and pitch, and the 
 last three were the redesign's until they moved to `Shared/`, so their keys lost the `.redesign.` and
 `Core/SGPrefs.h`'s `SGMigrateKey` carries the old ones over at launch.
 
-**The redesign needs iOS 26.** It is Liquid Glass, which the system draws from 26 on and no older OS
-can be given, so `SGRedesignAvailable()` (`Core/SGUIMode.h`) holds it there: below 26 both
-`SGRedesignedUI()` and `SGRedesignedUIStored()` answer NO whatever is stored, the switch becomes a
-"Needs iOS 26" row and the tour greys its card out. The native look's floor is iOS 16.1, which is
-Spotify 9.1.78's own.
+**The redesign is available on Spotify 9.1.78's iOS floor.** iOS 26 supplies Apple's native Liquid Glass; older supported systems use the existing blur/solid compatibility renderer. On iOS 16/17 the section-filtering layout hooks stay on the conservative path because the old self-sizing UICollectionView path triggered the scene-update watchdog in issue #37.
 
 ## Where code goes (`tweak/Sources/`)
 

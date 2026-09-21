@@ -92,11 +92,13 @@ static void applyRow(UIView *cell) {
     UIView *cell = (UIView *)self;
     if (!SGRPlaylistHeaderOf(cell)) return;
     SGRClearCellPaint(cell);
+    if (SGRedesignUsesSafeLegacyLayout()) return;
     SGRPlaylistTakeCuration(cell);
     applyRow(cell);
 }
 
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)attributes {
+    if (SGRedesignUsesSafeLegacyLayout()) return %orig;
     UICollectionViewLayoutAttributes *result = %orig;
     if (!SGRFindByIdentifier((UIView *)self, SGRPlaylistCurationIdentifier, &kToolbarKey)) return result;
     result.size = CGSizeMake(result.size.width, 0);

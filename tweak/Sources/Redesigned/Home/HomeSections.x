@@ -133,6 +133,9 @@ static void expand(UICollectionViewCell *cell) {
 
 %hook _TtC12Element_List18CollectionViewCell
 - (UICollectionViewLayoutAttributes *)preferredLayoutAttributesFittingAttributes:(UICollectionViewLayoutAttributes *)attributes {
+    // iOS 16/17 can re-enter self-sizing while contentView is being hidden and reframed. Keep
+    // Spotify's native list geometry on the compatibility path; the page/header/row styling still runs.
+    if (SGRedesignUsesSafeLegacyLayout()) return %orig;
     UICollectionViewCell *cell = (UICollectionViewCell *)self;
     UIView *content = cell.contentView;
     if (!isSection(content)) return %orig;
