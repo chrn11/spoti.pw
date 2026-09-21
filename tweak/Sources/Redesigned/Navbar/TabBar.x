@@ -324,7 +324,7 @@ static void makeRoom(UIViewController *container) {
     CGFloat height = glassHeight(bar, stockBar);
     // Spotify's regular width bar is a fixed 76 pt that ignores the inset.
     BOOL compact = container.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
-    CGFloat room = (SGSystemGlassAvailable() && compact) ? MAX(0, ceil(height - kStockRow - inset)) : 0;
+    CGFloat room = compact ? (SGSystemGlassAvailable() ? MAX(0, ceil(height - kStockRow - inset)) : 16) : 0;
     if (fabs(extra.bottom - room) < 0.5) return;
     sg_room = extra.bottom = room;
     container.additionalSafeAreaInsets = extra;
