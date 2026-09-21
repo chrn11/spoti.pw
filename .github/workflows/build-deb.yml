@@ -32,8 +32,17 @@ jobs:
         env:
           SG_FLAG_LIST: ${{ secrets.SG_FLAG_LIST }}
         run: |
-          [ -n "$SG_FLAG_LIST" ] || { echo "::error::the SG_FLAG_LIST secret is not set"; exit 1; }
-          echo "$SG_FLAG_LIST" | base64 -d | gunzip > tweak/Sources/Shared/Flags/SGFlagList.m
+          if [ -n "$SG_FLAG_LIST" ]; then
+            echo "$SG_FLAG_LIST" | base64 -d | gunzip > tweak/Sources/Shared/Flags/SGFlagList.m
+          else
+            echo "::warning::SG_FLAG_LIST is not configured; building with an empty flag table"
+            cat > tweak/Sources/Shared/Flags/SGFlagList.m <<'EOF'
+          // No Spotify IPA was supplied for this deb-only build.
+          #import "Flags.h"
+          const SGFlagDef SGFlagTable[1] = {{0}};
+          const NSUInteger SGFlagCount = 0;
+          EOF
+          fi
 
       - name: Build deb
         run: env -u MAKELEVEL gmake -C tweak clean package
