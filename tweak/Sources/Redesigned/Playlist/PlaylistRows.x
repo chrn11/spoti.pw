@@ -127,8 +127,23 @@ static void applyRow(UIView *cell) {
 }
 %end
 
+%hook _TtC12Element_List18CollectionViewCell
+- (void)layoutSubviews {
+    %orig;
+    UIView *cell = (UIView *)self;
+    if (!SGRPlaylistHeaderOf(cell)) return;
+    // Spotify uses the generic Element_List cell for some extender builds, while track rows use the
+    // playlist-specific cell class below. Clear page-owned extender paint in both cases.
+    SGRClearCellPaint(cell);
+    clearExtenderSurfaces(cell);
+}
+%end
+
 %ctor {
     if (!SGRedesignedUI()) return;
     %init;
-    SGRequireClasses(@[@"_TtC35ListUXPlatform_FreeTierPlaylistImpl25ElementCollectionViewCell"]);
+    SGRequireClasses(@[
+        @"_TtC35ListUXPlatform_FreeTierPlaylistImpl25ElementCollectionViewCell",
+        @"_TtC12Element_List18CollectionViewCell",
+    ]);
 }
