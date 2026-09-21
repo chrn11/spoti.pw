@@ -60,6 +60,21 @@ static void applyHairline(UIView *row, CGFloat leading) {
     [CATransaction commit];
 }
 
+static void clearExtenderSurfaces(UIView *cell) {
+    SGForEachView(cell, ^(UIView *view) {
+        NSString *identifier = view.accessibilityIdentifier ?: @"";
+        NSString *className = NSStringFromClass(view.class);
+        if (![identifier hasPrefix:@"PlaylistExtender."] && ![className containsString:@"PlaylistExtender"]) return;
+        // The extender heading/row can paint its black surface directly on either the view or its layer,
+        // bypassing the generic repaint observer. These are page-owned surfaces, not card artwork.
+        view.backgroundColor = UIColor.clearColor;
+        view.layer.backgroundColor = NULL;
+        for (CALayer *layer in view.layer.sublayers) {
+            if (layer.backgroundColor && SGIsBaseSurface(layer.backgroundColor)) layer.backgroundColor = NULL;
+        }
+    });
+}
+
 static void applyRow(UIView *cell) {
     clearSurface(cell);
     UIView *row = identified(cell, @"Encore.ListRow", &kRowKey);
@@ -94,6 +109,7 @@ static void applyRow(UIView *cell) {
     UIView *cell = (UIView *)self;
     if (!SGRPlaylistHeaderOf(cell)) return;
     SGRClearCellPaint(cell);
+    clearExtenderSurfaces(cell);
     if (SGRedesignUsesSafeLegacyLayout()) return;
     SGRPlaylistTakeCuration(cell);
     applyRow(cell);
