@@ -257,7 +257,7 @@ static BOOL flagRowOn(SGModRow *row) {
     return value && [value boolValue] != row.forceOff;
 }
 
-// A flag something of the mod's forces (Core/SGFlagForce.h: the redesign, the ad blocking): its row
+// A flag something of the mod's forces (Core/SGFlagForce.h: the redesign, the Search switches): its row
 // shows what is forced and takes no touch, so the flag has one place to change.
 static BOOL flagRowLocked(SGModRow *row) {
     return row.flag && SGLockedFlagValue(row.key, NULL) != nil;
@@ -306,7 +306,7 @@ static UIFont *tabular(UIFont *font) {
 
 @end
 
-// The Audio effects page's slider row (Shared/JamesDSP/JamesDSPPage.m), for any page: the title and the
+// The Audio effects page's slider row (Shared/AudioEffects/AudioEffectsPage.m), for any page: the title and the
 // value over a slider in the accent colour, a subtitle between them when there is one, each step stored
 // as the thumb reaches it.
 @interface SGModSliderCell : UITableViewCell

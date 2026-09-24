@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.22.0](https://github.com/skopevoj/spoti.pw/compare/v0.21.1...v0.22.0) (2026-09-23)
+
+
+### Features
+
+* Apple Music's animated album cover on the lock screen where the track has no Canvas ([e0d5538](https://github.com/skopevoj/spoti.pw/commit/e0d55383bc26149d7f3f5c803d07df0d0cf0e8bc))
+* audio effects run on the mod's own engine, libjamesdsp is gone ([413b2d3](https://github.com/skopevoj/spoti.pw/commit/413b2d3e5647822961b3f9eed317c9accf729a4c))
+* find in playlist as a glass search bar above the header, shown on pull-down ([#81](https://github.com/skopevoj/spoti.pw/issues/81)) ([36ed0a7](https://github.com/skopevoj/spoti.pw/commit/36ed0a798fb2f7756e8e62f2e0ee893b8329a1b8))
+* line meanings from Genius on the lyrics, a bubble for the artist's own and an underline for the rest, opened in a sheet ([950baf7](https://github.com/skopevoj/spoti.pw/commit/950baf778f6aa342176f293bc2ab00f0e960640a))
+* Mod &gt; Licenses shows the mod's license and the full text of the third-party ones ([c790445](https://github.com/skopevoj/spoti.pw/commit/c790445c70fcf6d0dea07b9550fa6d64a7fb87b7))
+* play the track's Canvas as the lock screen's animated artwork ([c4b75e3](https://github.com/skopevoj/spoti.pw/commit/c4b75e3785de5a49407cd6762fb8cc30c26cf5fa))
+* the artist's Follow is a glyph that turns into a checkmark, as add to library does ([#88](https://github.com/skopevoj/spoti.pw/issues/88)) ([f10bf8d](https://github.com/skopevoj/spoti.pw/commit/f10bf8d88e7d4a126ad143a77280999a64ab1c58))
+
+
+### Fixes
+
+* a long note under a settings section shows in full instead of ending in an ellipsis ([a6b1876](https://github.com/skopevoj/spoti.pw/commit/a6b187684356c83dad10cda2213f933886d6cc69))
+* add to library turns into a checkmark, and Follow no longer flips from a glyph to a word ([#86](https://github.com/skopevoj/spoti.pw/issues/86), [#88](https://github.com/skopevoj/spoti.pw/issues/88)) ([e524034](https://github.com/skopevoj/spoti.pw/commit/e524034ed886ff624761ca2299940d7b143e380f))
+* the player's more menu no longer hangs on loading and greys out lyrics for tracks no source has lyrics for ([#93](https://github.com/skopevoj/spoti.pw/issues/93)) ([283ac30](https://github.com/skopevoj/spoti.pw/commit/283ac308180468a1e124a3fb1e7a2ab9633d9241))
+* the playlist's cover keeps its size and its fade after the page is pulled down past the top ([a83562c](https://github.com/skopevoj/spoti.pw/commit/a83562cd928fa7a710d8a28ddd32c9e7486a0fa7))
+* the redesigned player can no longer be scrolled up ([#83](https://github.com/skopevoj/spoti.pw/issues/83)) ([62eee33](https://github.com/skopevoj/spoti.pw/commit/62eee3363981310b0e3d3c79e60acb2f9c309182))
+
 ## [0.21.1](https://github.com/skopevoj/spoti.pw/compare/v0.21.0...v0.21.1) (2026-09-21)
 
 
@@ -12,7 +34,7 @@
 
 ### Fixes
 
-* Recents with Block telemetry on, Spoof Premium with a 304, lyrics cache eviction, protobuf length overflow, Set rule types, Live Activity update order ([4b21bed](https://github.com/skopevoj/spoti.pw/commit/4b21bed034953c9786521101da9f96197f949b90))
+* Recents with Block telemetry on, lyrics cache eviction, protobuf length overflow, Set rule types, Live Activity update order ([4b21bed](https://github.com/skopevoj/spoti.pw/commit/4b21bed034953c9786521101da9f96197f949b90))
 * trim the Lyrics settings page ([76b8577](https://github.com/skopevoj/spoti.pw/commit/76b85776d1b6c4306ade9f2c84cd8039cbae4b55))
 * trim the Mod Settings descriptions ([79572ae](https://github.com/skopevoj/spoti.pw/commit/79572ae06b2a606f69d8314d87d57d302e1d0999))
 
@@ -102,7 +124,6 @@
 * add LRCLIB as the floor under the other lyrics sources ([ab78945](https://github.com/skopevoj/spoti.pw/commit/ab78945ecc114e3057af446c9d233d3e8f54cd1b))
 * add new record trees flag ([8bbdb6e](https://github.com/skopevoj/spoti.pw/commit/8bbdb6e4eb224df8a7835586848df642068450db))
 * Apple Music style lyrics only in the redesign and always on there, the native karaoke copy gone, and AGENTS.md and CLAUDE.md for agents ([cc24a25](https://github.com/skopevoj/spoti.pw/commit/cc24a25e29eaee1b103ca4019747884d3b3793b3))
-* block the ad card under the player and make crossfade and automix play ([55c3c60](https://github.com/skopevoj/spoti.pw/commit/55c3c60f7726e10e1e3bd3e5d0984b56c003e56a))
 * declutter the album page and put its blurred cover behind the header ([f414321](https://github.com/skopevoj/spoti.pw/commit/f414321444edb8e8261429677c42560f420c93fd))
 * declutter the artist page and fade its photo into a blur ([d169287](https://github.com/skopevoj/spoti.pw/commit/d1692876dcd2f7290cff6da4e5d4f46cb2560f10))
 * Home's shortcut tiles hold their cover inset on a surface tinted faintly by it, instead of the stretched blur ([3de8ea1](https://github.com/skopevoj/spoti.pw/commit/3de8ea1431ebca3243c72a282108c829dfadcb71))
