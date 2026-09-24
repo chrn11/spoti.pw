@@ -67,6 +67,11 @@ A feature is a directory in its layer holding everything about one area of the a
 
 Shared:
 
+    AdBlock/      EeveeSpotify's ad blocking: the ad and upsell services silenced (AdServices.x), ad components out of the
+                  Hub JSON (AdHubs.x) and the feeds (Feeds.m), Premium pop-ups dropped (AdPopups.x), and the responses
+                  rewritten on the way in (AdNetwork.x, Premium.m over the protobuf walker in Shared/Lyrics/Protobuf.m),
+                  with crossfade and automix switched on in the player core and crossfade's switch kept in step with
+                  its slider (Crossfade.x)
     Privacy/      telemetry blocking and its counters, and the Search switches that force their flags off (Clutter.m)
     ArtistBlock/  tracks by blocked artists skipped as they start (ArtistSkip.x), the list and the Blocked artists page under Player
     Flags/        Spotify's remote-config flags: the provider hook, the generated table, the All flags page and the Labs page
@@ -271,7 +276,9 @@ sliders, choices, curve or file library while its switch is on, everything apply
 out Off, On or how many effects are on. Home & Library, in the native look only:
 the Gradient page (the wash behind the top of Home in one of eight colours, at three strengths and
 four heights) and the Home flags, the parts of Home to hide including the DJ button and badge, the
-playlist header, buttons and pills to hide, and the Library flags. Then Privacy & clutter
+playlist header, buttons and pills to hide, and the Library flags. Then Premium, ads & privacy
+(the ad and upsell switches, the ad and upsell flags page, Spoof Premium, and the counters of what
+was blocked; Shared/AdBlock) and Privacy & clutter
 (Block telemetry; hiding the video carousel and social proof in Search, and a Tips page under them,
 every switch there forcing a flag Spotify ships on to off; then what the telemetry blocking has stopped) and Labs (features Spotify built and did not ship,
 AI Chat (Martini) first). Last, All flags, Spotify's remote-config flags with a search field and an
